@@ -1,0 +1,27 @@
+<div class="container my-4">
+  <h2 class="mb-3">CRUD de Tarjetas</h2>
+
+  <form (submit)="save()" class="mb-4">
+    <div class="mb-3">
+      <input [(ngModel)]="form.title" name="title" class="form-control" placeholder="Título" required>
+    </div>
+    <div class="mb-3">
+      <textarea [(ngModel)]="form.description" name="description" class="form-control" placeholder="Descripción" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+    <button type="button" class="btn btn-secondary ms-2" *ngIf="editing" (click)="reset()">Cancelar</button>
+  </form>
+
+  <div class="row">
+    <div class="col-md-4" *ngFor="let tarjeta of tarjetas">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ tarjeta.title }}</h5>
+          <p class="card-text">{{ tarjeta.description }}</p>
+          <button class="btn btn-warning btn-sm me-2" (click)="edit(tarjeta)">Editar</button>
+          <button class="btn btn-danger btn-sm" (click)="delete(tarjeta.id)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
