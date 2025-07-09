@@ -16,6 +16,11 @@ import { TarjetaDto } from './tarjetas.dto';
 export class TarjetasController {
   constructor(private readonly tarjetasService: TarjetasService) {}
 
+  @Get('reporte')
+  getReporte() {
+    return this.tarjetasService.getReporte();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Listar todas las tarjetas' })
   findAll() {

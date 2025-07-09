@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TarjetaService } from '../services/tarjetas.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-tarjetas',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tarjetas.components.html',
-  styleUrls: ['./tarjetas.components.scss']
+  styleUrls: ['./tarjetas.components.scss'],
 })
 export class TarjetasComponent implements OnInit {
   tarjetas: any[] = [];
@@ -16,48 +17,59 @@ export class TarjetasComponent implements OnInit {
   editing = false;
   editId: number | null = null;
 
-  constructor(private tarjetaService: TarjetaService) {}
+  constructor(
+    private tarjetaService: TarjetaService,
+    private toastr: ToastrService
+  ) {}
 
-ngOnInit(): void {
-  console.log("El componente Tarjetas se ha cargado");
-  this.loadTarjetas();
-}
-
+  ngOnInit(): void {
+    console.log('El componente Tarjetas se ha cargado');
+    this.loadTarjetas();
+  }
 
   loadTarjetas() {
-  this.tarjetaService.getTarjetas().subscribe({
-    next: (res: any) => {
-      console.log("Tarjetas recibidas desde el backend:", res);
-      this.tarjetas = res;
-    },
-    error: (err) => {
-      console.error("Error al cargar tarjetas:", err);
-    }
-  });
-}
+    this.tarjetaService.getTarjetas().subscribe({
+      next: (res: any) => {
+        console.log('Tarjetas recibidas desde el backend:', res);
+        this.tarjetas = res;
+      },
+      error: (err) => {
+        console.error('Error al cargar tarjetas:', err);
+      },
+    });
+  }
 
   save() {
     if (this.editing) {
-      this.tarjetaService.updateTarjeta(this.editId!, this.form).subscribe(() => {
-        this.reset();
-        this.loadTarjetas();
-      });
+      this.tarjetaService
+        .updateTarjeta(this.editId!, this.form)
+        .subscribe(() => {
+          this.reset();
+          this.loadTarjetas();
+        });
     } else {
       this.tarjetaService.createTarjeta(this.form).subscribe(() => {
+        this.toastr.success('Tarjeta creada exitosamente');
         this.reset();
         this.loadTarjetas();
       });
     }
   }
 
-  edit(tarjeta: any) {
-    this.form = { title: tarjeta.title, description: tarjeta.description };
-    this.editing = true;
-    this.editId = tarjeta.id;
-  }
+ edit(tarjeta: any) {
+  this.form = { title: tarjeta.title, description: tarjeta.description };
+  this.editing = true;
+  this.editId = tarjeta.id;
+
+  const modal = new (window as any).bootstrap.Modal(document.getElementById('editModal'));
+  modal.show();
+}
 
   delete(id: number) {
-    this.tarjetaService.deleteTarjeta(id).subscribe(() => this.loadTarjetas());
+    this.tarjetaService.deleteTarjeta(id).subscribe(() => {
+      this.toastr.info('Tarjeta eliminada');
+      this.loadTarjetas()   
+  });
   }
 
   reset() {
@@ -65,6 +77,4 @@ ngOnInit(): void {
     this.editing = false;
     this.editId = null;
   }
-
-  
 }

@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { getConnection } from '../database';
-import * as fs from 'fs';
+import { logToFile } from 'src/utils/logger';
 
 @Injectable()
 export class TarjetasService {
@@ -17,14 +19,16 @@ export class TarjetasService {
       await conn.beginTransaction();
       await conn.query(
         'INSERT INTO tarjetas (title, description) VALUES (?, ?)',
-        [title, description]
+        [title, description],
       );
       await conn.commit();
 
-      fs.appendFileSync(
-        'logs.txt',
-        `CREATED tarjeta: ${title} at ${new Date().toISOString()}\n`,
-      );
+      logToFile({
+        timestamp: new Date().toISOString(),
+        action: 'create',
+        tarjeta: { title, description },
+      });
+
       return { message: 'Tarjeta creada exitosamente' };
     } catch (e) {
       await conn.rollback();
@@ -40,14 +44,17 @@ export class TarjetasService {
       await conn.beginTransaction();
       await conn.query(
         'UPDATE tarjetas SET title = ?, description = ? WHERE id = ?',
-        [title, description, id]
+        [title, description, id],
       );
       await conn.commit();
 
-      fs.appendFileSync(
-        'logs.txt',
-        `UPDATED tarjeta ID: ${id} at ${new Date().toISOString()}\n`,
-      );
+      logToFile({
+        timestamp: new Date().toISOString(),
+        action: 'update',
+        tarjetaId: id,
+        updates: { title, description },
+      });
+
       return { message: 'Tarjeta actualizada exitosamente' };
     } catch (e) {
       await conn.rollback();
@@ -64,14 +71,37 @@ export class TarjetasService {
       await conn.query('DELETE FROM tarjetas WHERE id = ?', [id]);
       await conn.commit();
 
-      fs.appendFileSync(
-        'logs.txt',
-        `DELETED tarjeta ID: ${id} at ${new Date().toISOString()}\n`,
-      );
+      logToFile({
+        timestamp: new Date().toISOString(),
+        action: 'delete',
+        tarjetaId: id,
+      });
+
       return { message: 'Tarjeta eliminada exitosamente' };
     } catch (e) {
       await conn.rollback();
       throw e;
+    } finally {
+      await conn.end();
+    }
+  }
+
+  async getReporte() {
+    const conn = await getConnection();
+    try {
+      // Obtener total
+      const [totalRows]: any[] = await conn.query(
+        'SELECT COUNT(*) as total FROM tarjetas',
+      );
+      const totalTarjetas = totalRows[0]?.total || 0;
+
+      // Obtener último título
+      const [titleRows]: any[] = await conn.query(
+        'SELECT title FROM tarjetas ORDER BY created_at DESC LIMIT 1',
+      );
+      const ultimaTarjetaCreada = titleRows[0]?.title || null;
+
+      return { totalTarjetas, ultimaTarjetaCreada };
     } finally {
       await conn.end();
     }
