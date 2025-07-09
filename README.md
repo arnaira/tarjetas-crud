@@ -9,7 +9,7 @@ Este proyecto implementa un sistema CRUD (Crear, Leer, Actualizar, Eliminar) de 
 
 - **Backend:** NestJS, TypeScript, MySQL2, dotenv, fs
 - **Frontend:** Angular standalone, Bootstrap
-- **Documentación:** Swagger (OpenAPI)
+- **Documentación:** Swagger (OpenAPI), Postman
 - **Contenedores:** Docker y Docker Compose
 - **Scripts auxiliares:** archivos `.bat` para iniciar y detener el proyecto sin Docker
 
@@ -22,6 +22,7 @@ Este proyecto implementa un sistema CRUD (Crear, Leer, Actualizar, Eliminar) de 
 - `docker-compose.yml`: Orquestador para MySQL, backend y frontend
 - `init.sql`: Script SQL para crear la base de datos y tabla `tarjetas`
 - `start_tarjetas.bat` y `stop_tarjetas.bat`: Scripts para ejecutar o detener el proyecto sin Docker
+- `tarjetas-crud.postman_collection.json` : Endpoints para testing local en postman
 - `README.md`: esta documentación
 
 ---
