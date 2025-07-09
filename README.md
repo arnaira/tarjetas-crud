@@ -146,3 +146,13 @@ Para el frontend preferí Angular standalone. Lo inicialicé con `ng new` y lueg
 Pensando en facilitar la instalación, agregué varias opciones. Lo dockerice con un `docker-compose.yml` que levanta la base de datos, el backend y el frontend con un solo comando. Pero si no se desea utilizar Docker, cree dos scripts `.bat` que ejecutan y detienen el proyecto automáticamente en Windows.
 
 En resumen, construí este proyecto de la siguiente forma: primero instalé cada dependencia con `npm install`, luego desarrollé el backend con NestJS y el frontend con Angular y Bootstrap, conecté ambos mediante servicios HTTP, añadí logs e interceptores y, como extra, lo dockericé y creé los scripts `.bat` para que cualquiera pueda probarlo sin complicaciones.
+
+---
+
+## Contacto
+
+-Desarrollado por Ana Rivera
+
+-Email: [ana.rivera2023@gmail.com](mailto:ana.rivera2023@gmail.com)
+
+--- 
